@@ -11,8 +11,20 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Example {
+model Question {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+    statement String   @db.VarChar(255)
+    answers   Answer[]
+}
+
+model Answer {
+    id         String   @id @default(cuid())
+    createdAt  DateTime @default(now())
+    content    String   @db.VarChar(255)
+    isCorrect  Boolean  @db.TinyInt()
+    question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+    questionId String
+
+    @@index([questionId])
 }

@@ -9,19 +9,24 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { type DraggableLocation } from "@hello-pangea/dnd";
 import {
   faArrowsUpDownLeftRight,
-  // faPenToSquare,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import { api } from "~/utils/api";
 
-function MyForm() {
+const AddQuestion = () => {
   const [answerValue, setAnswerValue] = useState("");
-  // const [isEditing, setIsEditing] = useState(false);
-
+  const { mutate } = api.questions.create.useMutation({
+    onSuccess: () => {
+      console.log("success");
+    },
+    onError: (e) => {
+      console.log(e);
+    },
+  });
   const {
     register,
     handleSubmit,
     control,
-    // setFocus,
     formState: {
       errors: { question: questionError, answers: answersError },
     },
@@ -47,6 +52,7 @@ function MyForm() {
 
   const onSubmit = (data: IQuestion) => {
     console.log(data);
+    mutate({ question: data.question, answers: data.answers });
   };
 
   return (
@@ -86,7 +92,7 @@ function MyForm() {
             </div>
             <div className="mt-2">
               <label
-                htmlFor="statement"
+                htmlFor="answer"
                 className={`mb-2 block text-sm ${
                   answersError ? "text-red-500" : "text-slate-900"
                 }`}
@@ -111,7 +117,7 @@ function MyForm() {
                   className="ml-2 inline-flex items-center rounded-lg bg-slate-700 p-2.5 text-center text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 disabled:bg-slate-400"
                   onClick={() => {
                     if (answerValue !== "") {
-                      append({ name: answerValue, value: false });
+                      append({ content: answerValue, isCorrect: false });
                       setAnswerValue("");
                     }
                   }}
@@ -145,39 +151,16 @@ function MyForm() {
                                     id={field.id}
                                     type="text"
                                     className="grow rounded-lg bg-slate-200 p-2 outline-none disabled:bg-slate-50"
-                                    // disabled={!isEditing}
-                                    {...register(`answers.${index}.name`)}
+                                    {...register(`answers.${index}.content`)}
                                   />
-                                  {/* <div className="flex items-center justify-center">
-                                    {isEditing ? (
-                                      <button
-                                        onClick={() => setIsEditing(false)}
-                                        className="absolute right-2 rounded-lg bg-slate-700 px-2 py-1 text-white"
-                                      >
-                                        Apply
-                                      </button>
-                                    ) : (
-                                      <FontAwesomeIcon
-                                        icon={faPenToSquare}
-                                        className="absolute right-2 cursor-pointer px-2 text-lg text-blue-500"
-                                        onClick={() => {
-                                          setIsEditing(true);
-                                          setFocus(`answers.${index}.name`, {
-                                            shouldSelect: true,
-                                          });
-                                        }}
-                                      />
-                                    )}
-                                  </div> */}
                                 </div>
 
-                                {/* <input className="py-2 pl-2" type="text" value={field.name}/>                                */}
                                 <div className="flex gap-2 pl-2">
                                   <span className="py-1 text-xs font-semibold">
                                     Correct answer?
                                   </span>
                                   <input
-                                    {...register(`answers.${index}.value`)}
+                                    {...register(`answers.${index}.isCorrect`)}
                                     type="checkbox"
                                     className="accent-emerald-600 hover:accent-emerald-500"
                                   />
@@ -227,5 +210,5 @@ function MyForm() {
       </main>
     </>
   );
-}
-export default MyForm;
+};
+export default AddQuestion;

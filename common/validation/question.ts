@@ -8,9 +8,14 @@ export const questionSchema = z.object({
       .max(255),
   }),
   answers: z
-    .array(z.object({ name: z.string().min(1), value: z.boolean() }))
+    .array(
+      z.object({
+        content: z.string().min(1),
+        isCorrect: z.boolean(),
+      })
+    )
     .min(1, "Provide at least one answer")
-    .refine((data) => data.some((answer) => answer.value === true), {
+    .refine((data) => data.some((answer) => answer.isCorrect === true), {
       message: "At least one answer must be true",
     }),
 });
