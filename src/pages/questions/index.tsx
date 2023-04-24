@@ -42,12 +42,12 @@ const QuestionsPage: NextPage = () => {
   );
 };
 
-// export const getStaticProps: GetStaticProps = async () => {
-//   const ssg = generateSSGHelper();
-//   await ssg.questions.getAll.prefetch();
-//   return {
-//     props: { trpcState: ssg.dehydrate() },
-//   };
-// };
+export const getStaticProps: GetStaticProps = async () => {
+  const ssg = generateSSGHelper();
+  await ssg.questions.getAll.prefetch();
+  return {
+    props: { trpcState: ssg.dehydrate() },
+  };
+};
 
 export default QuestionsPage;
