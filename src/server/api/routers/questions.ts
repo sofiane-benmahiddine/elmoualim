@@ -6,11 +6,12 @@ export const questionsRouter = createTRPCRouter({
       include: { answers: true },
     });
     const newQuestions = questions.map((question) => {
-      const newAnswers = question.answers.map((answer) => ({
-        ...answer,
-        isCorrect: false,
-      }));
-      return { ...question, answers: newAnswers };
+      const newAnswers = question.answers.map((answer) => {
+        const { id, content } = answer;
+        return { id, content: content };
+      });
+      const { id, statement } = question;
+      return { id, statement, answers: newAnswers };
     });
     return newQuestions;
   }),
@@ -20,6 +21,7 @@ export const questionsRouter = createTRPCRouter({
       const question = await ctx.prisma.question.create({
         data: {
           statement: input.question.statement,
+          examId: input.examId,
         },
       });
       const createAnswerData = input.answers.map((answer) => ({

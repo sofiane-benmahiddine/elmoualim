@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { type FC, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { IQuestion } from "common/validation/question";
-import { questionSchema } from "common/validation/question";
+import {
+  type IQuestionForm,
+  questionFormSchema,
+} from "common/validation/question";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { type DraggableLocation } from "@hello-pangea/dnd";
@@ -11,12 +13,16 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { api } from "~/utils/api";
+import { LoadingSpinner } from "./Loading";
 
-const AddQuestion = () => {
+const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
   const [answerValue, setAnswerValue] = useState("");
-  const { mutate } = api.questions.create.useMutation({
-    onSuccess: () => {
-      console.log("success");
+  const ctx = api.useContext();
+
+  const { mutate, isLoading } = api.questions.create.useMutation({
+    onSuccess: async () => {
+      reset();
+      await ctx.exams.getById.invalidate();
     },
     onError: (e) => {
       console.log(e);
@@ -26,13 +32,13 @@ const AddQuestion = () => {
     register,
     handleSubmit,
     control,
+    reset,
     formState: {
       errors: { question: questionError, answers: answersError },
     },
-  } = useForm<IQuestion>({
-    resolver: zodResolver(questionSchema),
+  } = useForm<IQuestionForm>({
+    resolver: zodResolver(questionFormSchema),
   });
-
   const { fields, append, remove, move } = useFieldArray({
     control,
     name: "answers",
@@ -49,11 +55,19 @@ const AddQuestion = () => {
     }
   };
 
-  const onSubmit = (data: IQuestion) => {
-    console.log(data);
-    mutate({ question: data.question, answers: data.answers });
+  const onSubmit = (data: IQuestionForm) => {
+    mutate({
+      examId: id,
+      question: data.question,
+      answers: data.answers,
+    });
   };
-
+  if (isLoading)
+    return (
+      <div className="flex items-center justify-center p-4">
+        <LoadingSpinner size={60} />
+      </div>
+    );
   return (
     <div className="flex w-full max-w-xl flex-col rounded-lg bg-slate-200 p-4">
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -74,7 +88,7 @@ const AddQuestion = () => {
                 ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                 : "border-gray-300 text-slate-900 focus:border-blue-500 focus:ring-blue-500"
             } " bg-slate-50 p-2.5 text-sm outline-none`}
-            placeholder="Write your statement here..."
+            placeholder="Write your question statement here..."
             {...register("question.statement")}
           ></textarea>
           {questionError && (
@@ -193,7 +207,8 @@ const AddQuestion = () => {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="mt-2 inline-flex items-center rounded-lg bg-slate-700 p-2.5 text-center text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300"
+            disabled={isLoading}
+            className="mt-2 inline-flex items-center rounded-lg bg-slate-700 p-2.5 text-center text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 disabled:bg-slate-400"
           >
             Submit
           </button>
@@ -202,4 +217,4 @@ const AddQuestion = () => {
     </div>
   );
 };
-export default AddQuestion;
+export default AddQuestionCard;

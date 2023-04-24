@@ -8,7 +8,7 @@ import { LoadingPage } from "~/components/Loading";
 
 import { api } from "~/utils/api";
 
-const HomePage: NextPage = () => {
+const CreateExamPage: NextPage = () => {
   const [examTitle, setExamTitle] = useState<string>("");
   const router = useRouter();
   const { mutate, isLoading } = api.exams.create.useMutation({
@@ -23,7 +23,7 @@ const HomePage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Home</title>
+        <title>Create</title>
       </Head>
       <div className="flex justify-center px-2 py-12">
         <div className="flex w-full max-w-xl flex-col justify-center gap-2">
@@ -56,4 +56,4 @@ const HomePage: NextPage = () => {
   );
 };
 
-export default HomePage;
+export default CreateExamPage;
