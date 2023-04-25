@@ -13,7 +13,6 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { api } from "~/utils/api";
-import { LoadingSpinner } from "./Loading";
 
 const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
   const [answerValue, setAnswerValue] = useState("");
@@ -22,6 +21,9 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
   const { mutate, isLoading } = api.questions.create.useMutation({
     onSuccess: async () => {
       reset();
+      fields.forEach((item, index) => {
+        remove(index);
+      });
       await ctx.exams.getById.invalidate();
     },
     onError: (e) => {
@@ -62,14 +64,9 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
       answers: data.answers,
     });
   };
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center p-4">
-        <LoadingSpinner size={60} />
-      </div>
-    );
+
   return (
-    <div className="flex w-full max-w-xl flex-col rounded-lg bg-slate-200 p-4">
+    <div className="flex h-fit w-full max-w-5xl flex-col rounded-lg bg-slate-200 p-4">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label
@@ -141,53 +138,54 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
                 <div {...provided.droppableProps} ref={provided.innerRef}>
                   {fields.map((field, index) => (
                     <Draggable
-                      key={`answers[${index}]`}
                       draggableId={`field-${index}`}
                       index={index}
+                      key={`answers[${index}]`}
                     >
                       {(provided) => (
                         <div
                           key={field.id}
-                          ref={provided.innerRef}
-                          className="min-h-8 my-2 flex divide-x rounded-lg bg-slate-50"
+                          className="py-1"
                           {...provided.draggableProps}
+                          ref={provided.innerRef}
                         >
-                          <div className="flex grow flex-col gap-1 divide-y p-2 text-sm">
-                            <div className="relative flex">
+                          <div
+                            className="min-h-8 flex divide-x rounded-lg bg-slate-50"
+                          >
+                            <div className="flex grow flex-col gap-1 divide-y p-2 text-sm">
                               <input
                                 id={field.id}
                                 type="text"
                                 className="grow rounded-lg bg-slate-200 p-2 outline-none disabled:bg-slate-50"
                                 {...register(`answers.${index}.content`)}
                               />
+                              <div className="flex gap-2 pl-2">
+                                <span className="py-1 text-xs font-semibold">
+                                  Correct answer?
+                                </span>
+                                <input
+                                  {...register(`answers.${index}.isCorrect`)}
+                                  type="checkbox"
+                                  className="accent-emerald-600 hover:accent-emerald-500"
+                                />
+                              </div>
                             </div>
-
-                            <div className="flex gap-2 pl-2">
-                              <span className="py-1 text-xs font-semibold">
-                                Correct answer?
-                              </span>
-                              <input
-                                {...register(`answers.${index}.isCorrect`)}
-                                type="checkbox"
-                                className="accent-emerald-600 hover:accent-emerald-500"
+                            <div
+                              className="flex items-center justify-center"
+                              {...provided.dragHandleProps}
+                            >
+                              <FontAwesomeIcon
+                                icon={faArrowsUpDownLeftRight}
+                                className="px-4 text-lg"
                               />
                             </div>
-                          </div>
-                          <div
-                            className="flex items-center justify-center"
-                            {...provided.dragHandleProps}
-                          >
-                            <FontAwesomeIcon
-                              icon={faArrowsUpDownLeftRight}
-                              className="px-4 text-lg"
-                            />
-                          </div>
-                          <div className="flex items-center justify-center">
-                            <FontAwesomeIcon
-                              icon={faTrash}
-                              className="cursor-pointer px-4 text-lg text-red-500"
-                              onClick={() => remove(index)}
-                            />
+                            <div className="flex items-center justify-center">
+                              <FontAwesomeIcon
+                                icon={faTrash}
+                                className="cursor-pointer px-4 text-lg text-red-500"
+                                onClick={() => remove(index)}
+                              />
+                            </div>
                           </div>
                         </div>
                       )}
