@@ -17,7 +17,6 @@ import { api } from "~/utils/api";
 const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
   const [answerValue, setAnswerValue] = useState("");
   const ctx = api.useContext();
-
   const { mutate, isLoading } = api.questions.create.useMutation({
     onSuccess: async () => {
       reset();

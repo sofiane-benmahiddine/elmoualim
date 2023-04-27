@@ -25,4 +25,8 @@ export const examsRouter = createTRPCRouter({
       if (!exam) throw new TRPCError({ code: "NOT_FOUND" });
       return exam;
     }),
+  getAll: publicProcedure.query(async ({ ctx }) => {
+    const exams = await ctx.prisma.exam.findMany();
+    return exams;
+  }),
 });
