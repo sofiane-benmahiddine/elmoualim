@@ -66,7 +66,7 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
   };
 
   return (
-    <div className="flex h-fit w-full max-w-5xl flex-col rounded-lg bg-slate-200 p-4">
+    <div className="flex h-fit w-full max-w-5xl flex-col rounded-sm bg-gray-200 p-4">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label
@@ -80,7 +80,7 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
           <textarea
             id="statement"
             rows={3}
-            className={`block w-full rounded-lg border ${
+            className={`block w-full rounded-sm border ${
               questionError
                 ? "border-red-300 focus:border-red-500 focus:ring-red-500"
                 : "border-gray-300 text-slate-900 focus:border-blue-500 focus:ring-blue-500"
@@ -109,7 +109,7 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
               id="answer"
               onChange={(e) => setAnswerValue(e.target.value)}
               value={answerValue}
-              className={`block w-full rounded-lg border bg-slate-50 p-2.5 text-sm ${
+              className={`block w-full rounded-sm border bg-slate-50 p-2.5 text-sm ${
                 answersError
                   ? "border-red-300 text-red-500 outline-none focus:border-red-500 focus:ring-red-500"
                   : "border-slate-300 text-slate-900 outline-none focus:border-blue-500 focus:ring-blue-500"
@@ -118,7 +118,7 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
             />
             <button
               type="button"
-              className="ml-2 inline-flex items-center rounded-lg bg-slate-700 p-2.5 text-center text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 disabled:bg-slate-400"
+              className="ml-2 inline-flex items-center rounded-sm bg-slate-700 p-2.5 text-center text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 disabled:bg-slate-400"
               onClick={() => {
                 if (answerValue !== "") {
                   append({ content: answerValue, isCorrect: false });
@@ -142,7 +142,7 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
                       index={index}
                       key={`answers[${index}]`}
                     >
-                      {(provided) => (
+                      {(provided, snapshot) => (
                         <div
                           key={field.id}
                           className="py-1"
@@ -150,13 +150,17 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
                           ref={provided.innerRef}
                         >
                           <div
-                            className="min-h-8 flex divide-x rounded-lg bg-slate-50"
+                            className={`min-h-8 flex divide-x rounded-sm ${
+                              snapshot.isDragging
+                                ? "bg-blue-200"
+                                : "bg-slate-50"
+                            }`}
                           >
                             <div className="flex grow flex-col gap-1 divide-y p-2 text-sm">
                               <input
                                 id={field.id}
                                 type="text"
-                                className="grow rounded-lg bg-slate-200 p-2 outline-none disabled:bg-slate-50"
+                                className="grow rounded-sm bg-slate-200 p-2 outline-none disabled:bg-slate-50"
                                 {...register(`answers.${index}.content`)}
                               />
                               <div className="flex gap-2 pl-2">
@@ -171,7 +175,7 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
                               </div>
                             </div>
                             <div
-                              className="flex items-center justify-center"
+                              className="flex cursor-grab items-center justify-center"
                               {...provided.dragHandleProps}
                             >
                               <FontAwesomeIcon
@@ -206,7 +210,7 @@ const AddQuestionCard: FC<{ id: string }> = ({ id }) => {
           <button
             type="submit"
             disabled={isLoading}
-            className="mt-2 inline-flex items-center rounded-lg bg-slate-700 p-2.5 text-center text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 disabled:bg-slate-400"
+            className="mt-2 inline-flex items-center rounded-sm bg-slate-700 p-2.5 text-center text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 disabled:bg-slate-400"
           >
             Submit
           </button>

@@ -1,5 +1,6 @@
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { questionSchema } from "common/validation/question";
+import { z } from "zod";
 export const questionsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const questions = await ctx.prisma.question.findMany({
@@ -31,5 +32,15 @@ export const questionsRouter = createTRPCRouter({
       await ctx.prisma.answer.createMany({
         data: createAnswerData,
       });
+    }),
+  delete: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const question = await ctx.prisma.question.delete({
+        where: {
+          id: input.id,
+        },
+      });
+      return question;
     }),
 });

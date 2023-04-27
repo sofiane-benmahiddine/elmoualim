@@ -27,7 +27,7 @@ const HomePage: NextPage = () => {
       </Head>
       <div className="flex justify-center px-2 py-12">
         <div className="flex w-full max-w-xl flex-col justify-center gap-2">
-          <div className="flex flex-col gap-2 rounded-lg bg-slate-200 p-4">
+          <div className="flex flex-col gap-2 rounded-sm bg-slate-200 p-4">
             <label htmlFor="title" className="block text-sm text-slate-900">
               Title:
             </label>
@@ -37,12 +37,12 @@ const HomePage: NextPage = () => {
               onChange={(e) => setExamTitle(e.target.value)}
               id="title"
               placeholder="Write your title here..."
-              className="block w-full rounded-lg border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-blue-500"
+              className="block w-full rounded-sm border border-slate-300 bg-slate-50 p-2.5 text-sm text-slate-900 outline-none focus:border-blue-500 focus:ring-blue-500"
             />
             <div className="flex justify-center">
               <button
                 type="button"
-                className="flex w-fit items-center gap-2 rounded-lg bg-slate-700 p-2.5 text-center text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 disabled:bg-slate-400"
+                className="flex w-fit items-center gap-2 rounded-sm bg-slate-700 p-2.5 text-center text-sm text-white hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 disabled:bg-slate-400"
                 onClick={() => mutate({ title: examTitle })}
               >
                 Next
