@@ -1,4 +1,4 @@
-import { examSchema } from "common/validation/exam";
+import { examSchema, updateExamSchema } from "common/validation/exam";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
@@ -29,4 +29,25 @@ export const examsRouter = createTRPCRouter({
     const exams = await ctx.prisma.exam.findMany();
     return exams;
   }),
+  update: publicProcedure.input(updateExamSchema).mutation(({ ctx, input }) => {
+    const exam = ctx.prisma.exam.update({
+      where: {
+        id: input.id,
+      },
+      data: {
+        title: input.title,
+      },
+    });
+    return exam;
+  }),
+  delete: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      const exam = ctx.prisma.exam.delete({
+        where: {
+          id: input.id,
+        },
+      });
+      return exam;
+    }),
 });

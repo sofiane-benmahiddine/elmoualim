@@ -14,7 +14,7 @@ import {
 import { useState } from "react";
 import { type Answer, type Question } from "@prisma/client";
 import { useModal } from "@ebay/nice-modal-react";
-import MyModal from "~/components/MyModal";
+import DeleteModal from "~/components/DeleteModal";
 import { LoadingSpinner } from "~/components/Loading";
 
 interface DraggedItem {
@@ -28,7 +28,7 @@ type TQuestion = Question & {
 const ExamPage: NextPage<{ id: string }> = ({ id }) => {
   const [questionList, setQuestionList] = useState<TQuestion[]>([]);
 
-  const modal = useModal(MyModal);
+  const modal = useModal(DeleteModal);
 
   const reorder = (list: TQuestion[], startIndex: number, endIndex: number) => {
     const result = Array.from(list);
